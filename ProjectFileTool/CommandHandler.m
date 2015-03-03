@@ -33,36 +33,44 @@
     NSString *xcodeProj=[[NSUserDefaults standardUserDefaults] objectForKey:@"xcproj"];
     NSString *targetsString=[[NSUserDefaults standardUserDefaults]   objectForKey:@"targets"];
     NSArray *targets=NULL;
+    
     if (targetsString)
     {
-        targets=[targetsString componentsSeparatedByString:@","];
+        targets = [targetsString componentsSeparatedByString:@","];
     }
     
-    ProjectParser *parser=[ProjectParser new];
+    ProjectParser *parser1 = [ProjectParser new];
     
-    [parser setXcodeProjPath:xcodeProj];
-    if (targets)
-    {
-        [parser setAllowedTargets:targets];
+    [parser1 setXcodeProjPath:xcodeProj];
+    
+    ProjectParser *parser2 = [ProjectParser new];
+    
+    [parser2 setXcodeProjPath:xcodeProj];
+    
+    if (targets) {
+        [parser1 setAllowedTargets:@[[targets objectAtIndex:0]]];
+        [parser2 setAllowedTargets:@[[targets objectAtIndex:1]]];
     }
     
-    if (showTargets)
-    {
-        NSArray *targets=[parser getTargets];
-        NSString *targetString=[targets componentsJoinedByString:@"\n"];
-        
-        printf("%s\n",[targetString UTF8String]);
-        
-        return 0;
-    }
+    NSDictionary *filePaths1 = [parser1 pathsAndFiles];
+    NSDictionary *filePaths2 = [parser2 pathsAndFiles];
     
-    NSDictionary *filePaths=[parser pathsAndFiles];
+//    for (NSString *path in [filePaths allKeys]) {
+//        printf("%s\n",[path UTF8String]);
+//    }
     
-    for (NSString *path in [filePaths allKeys]) {
-        printf("%s\n",[path UTF8String]);
-    }
+    NSMutableSet *set1 = [NSMutableSet setWithArray:[filePaths1 allKeys]];
+    NSMutableSet *set2 = [NSMutableSet setWithArray:[filePaths2 allKeys]];
     
-    [parser release];
+    [set2 minusSet:set1];
+    printf("%s",set2.description.UTF8String);
+    set1 = [NSMutableSet setWithArray:[filePaths1 allKeys]];
+    set2 = [NSMutableSet setWithArray:[filePaths2 allKeys]];
+    [set1 minusSet:set2];
+    printf("%s",set1.description.UTF8String);
+    
+    [parser1 release];
+    [parser2 release];
     
     return 0;
 }

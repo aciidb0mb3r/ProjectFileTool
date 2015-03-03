@@ -19,7 +19,6 @@ int main(int argc, const char * argv[]) {
             //NSLog(@"argv[%d] = '%@'", i, str);
             [arguments addObject:str];
         }
-        
         CommandHandler *handler=[CommandHandler new];
         BOOL result=[handler runWithArguments:arguments];
         [handler release];

@@ -8,8 +8,6 @@
 
 #import "ProjectParser.h"
 
-
-
 @interface ProjectParser ()
 
 @property (retain) NSDictionary *plistObjects;
@@ -88,6 +86,8 @@
 {
     NSDictionary *fileRef=[self.plistObjects objectForKey:reference];
     NSString *fileKey=[fileRef objectForKey:@"fileRef"];
+    if(fileKey == nil)
+        return nil;
     NSDictionary *fileObject=[self.plistObjects objectForKey:fileKey];
     
     return [NSDictionary dictionaryWithObject:fileObject
@@ -237,6 +237,7 @@
     [self extractTargets];
     [self extractBuildPhases];
     [self extractProjectInfo];
+    
     
     NSMutableDictionary *filesUsedByTargets=[NSMutableDictionary dictionary];
     
